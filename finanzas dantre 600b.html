@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinanzasBach — Tu dinero, tu futuro</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lime: #b5e824;
+    --lime-dark: #8ab800;
+    --lime-pale: #eefbbf;
+    --lime-text: #3a5200;
+    --mint: #d6f5e0;
+    --navy: #0d1b2a;
+    --navy2: #132133;
+    --navy3: #1c2f45;
+    --card: #1a2d42;
+    --border: rgba(181,232,36,0.18);
+    --border2: rgba(181,232,36,0.35);
+    --text: #e8f4ff;
+    --text2: #8fafc8;
+    --text3: #c2ddf0;
+    --green: #2fd87a;
+    --red: #ff5e5e;
+    --amber: #f5c842;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SNOW CANVAS ── */
+  #snow-canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,27,42,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem; height: 64px;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.3rem;
+    color: var(--lime);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-tabs {
+    display: flex; gap: 4px;
+    background: var(--navy2);
+    border-radius: 50px;
+    padding: 4px;
+  }
+  .nav-tab {
+    padding: 6px 18px;
+    border-radius: 50px;
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .nav-tab.active, .nav-tab:hover {
+    background: var(--lime);
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .wa-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: #25D366;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 600;
+    padding: 8px 16px; border-radius: 50px;
+    text-decoration: none;
+    transition: transform .15s, box-shadow .15s;
+    border: none; cursor: pointer;
+  }
+  .wa-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(37,211,102,.35); }
+  .wa-icon { width: 18px; height: 18px; }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; z-index: 1;
+    padding: 5rem 2rem 3rem;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(181,232,36,.15);
+    border: 1px solid var(--border2);
+    color: var(--lime);
+    font-size: 0.8rem; font-weight: 600;
+    padding: 5px 14px; border-radius: 50px;
+    letter-spacing: .06em; text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1.08;
+    margin-bottom: 1.2rem;
+  }
+  .hero h1 em { color: var(--lime); font-style: normal; }
+  .hero p { color: var(--text2); font-size: 1.1rem; max-width: 520px; margin: 0 auto 2.5rem; }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--lime); color: var(--navy);
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 1rem; padding: 14px 32px;
+    border-radius: 50px; border: none; cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(181,232,36,.4); }
+  .btn-ghost {
+    background: transparent; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 1rem; padding: 14px 32px;
+    border-radius: 50px;
+    border: 1px solid var(--border2);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-ghost:hover { background: var(--navy3); }
+
+  /* ── SECTION ── */
+  .section {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 2.5rem 2rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .dot { width: 8px; height: 8px; background: var(--lime); border-radius: 50%; flex-shrink: 0; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+  .card-sm { padding: 1.1rem 1.25rem; border-radius: var(--radius-sm); }
+
+  /* ── STAT GRID ── */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .stat-card {
+    background: var(--navy2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1.1rem 1.25rem;
+  }
+  .stat-label { font-size: 0.75rem; color: var(--text2); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 6px; }
+  .stat-value { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 700; }
+  .stat-value.green { color: var(--green); }
+  .stat-value.red { color: var(--red); }
+  .stat-value.amber { color: var(--amber); }
+  .stat-value.lime { color: var(--lime); }
+
+  /* ── FORM ── */
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label { font-size: 0.8rem; color: var(--text2); font-weight: 500; }
+  .form-input, .form-select {
+    background: var(--navy2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--lime); }
+  .form-select option { background: var(--navy2); }
+  .form-actions { display: flex; gap: 10px; margin-top: 6px; }
+  .btn-add {
+    background: var(--lime); color: var(--navy);
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 0.9rem; padding: 10px 24px;
+    border-radius: 50px; border: none; cursor: pointer;
+    transition: transform .15s;
+  }
+  .btn-add:hover { transform: translateY(-1px); }
+  .btn-cancel {
+    background: transparent; color: var(--text2);
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 0.9rem; padding: 10px 20px;
+    border-radius: 50px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  /* ── TRANSACTIONS TABLE ── */
+  .tx-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .tx-table th { color: var(--text2); font-weight: 500; font-size: 0.78rem; text-transform: uppercase; letter-spacing: .06em; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  .tx-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,.05); }
+  .tx-table tr:last-child td { border-bottom: none; }
+  .tx-badge {
+    display: inline-block;
+    font-size: 0.74rem; font-weight: 600;
+    padding: 3px 10px; border-radius: 50px;
+  }
+  .tx-badge.income { background: rgba(47,216,122,.15); color: var(--green); }
+  .tx-badge.expense { background: rgba(255,94,94,.15); color: var(--red); }
+  .tx-del {
+    background: none; border: none;
+    color: var(--text2); cursor: pointer;
+    font-size: 1.1rem; transition: color .15s;
+  }
+  .tx-del:hover { color: var(--red); }
+
+  /* ── PERIOD TABS ── */
+  .period-tabs {
+    display: flex; gap: 6px; margin-bottom: 1.5rem;
+  }
+  .period-tab {
+    padding: 7px 18px; border-radius: 50px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; cursor: pointer;
+    transition: all .15s;
+  }
+  .period-tab.active {
+    background: var(--lime); color: var(--navy);
+    font-weight: 600; border-color: var(--lime);
+  }
+
+  /* ── CHART WRAPPER ── */
+  .chart-wrap { position: relative; width: 100%; height: 280px; }
+
+  /* ── INVESTMENT CARDS ── */
+  .inv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .inv-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem;
+    transition: border-color .2s, transform .2s;
+    cursor: default;
+  }
+  .inv-card:hover { border-color: var(--lime); transform: translateY(-3px); }
+  .inv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .inv-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; }
+  .inv-ticker {
+    background: rgba(181,232,36,.15); color: var(--lime);
+    font-size: 0.75rem; font-weight: 700;
+    padding: 3px 10px; border-radius: 50px;
+    letter-spacing: .05em;
+  }
+  .inv-desc { color: var(--text2); font-size: 0.85rem; margin-bottom: 14px; line-height: 1.5; }
+  .inv-meta { display: flex; gap: 16px; }
+  .inv-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .inv-meta-label { font-size: 0.72rem; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; }
+  .inv-meta-val { font-weight: 600; font-size: 0.95rem; }
+  .inv-meta-val.pos { color: var(--green); }
+  .inv-meta-val.neg { color: var(--red); }
+  .inv-risk {
+    display: inline-block;
+    font-size: 0.72rem; font-weight: 600;
+    padding: 2px 9px; border-radius: 50px;
+    margin-top: 12px;
+  }
+  .risk-low { background: rgba(47,216,122,.15); color: var(--green); }
+  .risk-med { background: rgba(245,200,66,.15); color: var(--amber); }
+  .risk-high { background: rgba(255,94,94,.15); color: var(--red); }
+
+  /* ── SIMULATOR ── */
+  .sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media(max-width: 700px) { .sim-grid { grid-template-columns: 1fr; } }
+  .sim-result {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem; font-weight: 800;
+    color: var(--lime); margin: 8px 0;
+  }
+
+  /* ── WIX SECTION ── */
+  .wix-box {
+    background: linear-gradient(135deg, rgba(181,232,36,.08), rgba(181,232,36,.02));
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+  }
+  .wix-code {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.82rem;
+    color: var(--lime);
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin-top: 1rem;
+  }
+  .copy-btn {
+    background: var(--lime); color: var(--navy);
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 0.85rem; padding: 8px 20px;
+    border-radius: 50px; border: none; cursor: pointer;
+    margin-top: 12px;
+  }
+
+  /* ── LEMON SNOW ── */
+  .lemon-tag {
+    display: inline-block;
+    background: rgba(245,200,66,.18);
+    color: var(--amber);
+    font-size: 0.72rem; font-weight: 600;
+    padding: 2px 10px; border-radius: 50px;
+    letter-spacing: .05em; margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: var(--navy3); border-radius: 3px; }
+
+  /* ── EMPTY STATE ── */
+  .empty { text-align: center; padding: 2.5rem; color: var(--text2); }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 8px; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 2rem;
+    color: var(--text2);
+    font-size: 0.82rem;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--lime); text-decoration: none; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2rem 0;
+  }
+
+  .toggle-form-btn {
+    background: transparent;
+    border: 1px dashed var(--border2);
+    color: var(--lime);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500; font-size: 0.9rem;
+    padding: 10px 22px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background .15s;
+    margin-bottom: 1.2rem;
+  }
+  .toggle-form-btn:hover { background: rgba(181,232,36,.08); }
+
+  .hidden { display: none !important; }
+
+  .progress-bar-wrap {
+    background: var(--navy2);
+    border-radius: 50px;
+    height: 8px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 50px;
+    background: var(--lime);
+    transition: width .5s ease;
+  }
+  .progress-bar-fill.red { background: var(--red); }
+  .progress-bar-fill.amber { background: var(--amber); }
+</style>
+</head>
+<body>
+
+<canvas id="snow-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">💰 <span>Finanzas</span>Bach</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('inicio')">Inicio</button>
+    <button class="nav-tab" onclick="showPage('movimientos')">Movimientos</button>
+    <button class="nav-tab" onclick="showPage('dashboard')">Dashboard</button>
+    <button class="nav-tab" onclick="showPage('inversiones')">Invertir</button>
+    <button class="nav-tab" onclick="showPage('wix')">Conectar Wix</button>
+  </div>
+  <a class="wa-btn" href="https://wa.me/525523239785?text=Hola,%20necesito%20soporte%20t%C3%A9cnico%20con%20FinanzasBach" target="_blank">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Soporte
+  </a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE: INICIO
+════════════════════════════════════════════════════ -->
+<div id="page-inicio" class="page active">
+  <div class="hero">
+    <div class="hero-badge">🎓 Para estudiantes de bachillerato</div>
+    <h1>Controla tu dinero,<br><em>construye tu futuro</em></h1>
+    <p>Registra ingresos y gastos, analiza tus finanzas con dashboards visuales e invierte de manera inteligente desde la bolsa de valores.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="showPage('movimientos')">Empezar ahora →</button>
+      <button class="btn-ghost" onclick="showPage('dashboard')">Ver mi dashboard</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 16px;">
+      <div class="card card-sm" style="border-left: 3px solid var(--green);">
+        <div style="font-size:1.5rem;margin-bottom:8px;">📊</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:6px;">Dashboard semanal, quincenal y mensual</div>
+        <div style="color:var(--text2);font-size:0.85rem;">Visualiza tus movimientos en tres horizontes de tiempo con gráficas interactivas.</div>
+      </div>
+      <div class="card card-sm" style="border-left: 3px solid var(--lime);">
+        <div style="font-size:1.5rem;margin-bottom:8px;">💸</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:6px;">Registro fácil de ingresos y gastos</div>
+        <div style="color:var(--text2);font-size:0.85rem;">Añade movimientos en segundos con categorías pensadas para estudiantes.</div>
+      </div>
+      <div class="card card-sm" style="border-left: 3px solid var(--amber);">
+        <div style="font-size:1.5rem;margin-bottom:8px;">📈</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:6px;">Inversión inteligente en bolsa</div>
+        <div style="color:var(--text2);font-size:0.85rem;">Descubre ETFs y acciones con perfiles de riesgo adecuados para principiantes.</div>
+      </div>
+      <div class="card card-sm" style="border-left: 3px solid #25D366;">
+        <div style="font-size:1.5rem;margin-bottom:8px;">💬</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:6px;">Soporte por WhatsApp</div>
+        <div style="color:var(--text2);font-size:0.85rem;">¿Tienes dudas? Escríbenos al instante al <a href="https://wa.me/525523239785" target="_blank" style="color:#25D366;">+52 55 2323 9785</a>.</div>
+      </div>
+    </div>
+
+    <!-- Nieve de Limón info -->
+    <div class="divider"></div>
+    <div class="card" style="background: rgba(245,200,66,.07); border-color: rgba(245,200,66,.25); text-align:center; padding: 2rem;">
+      <div style="font-size:2rem;margin-bottom:8px;">🍋</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:8px;color:var(--amber);">Nieve de Limón <span class="lemon-tag">animada</span></div>
+      <div style="color:var(--text2);font-size:0.9rem;max-width:440px;margin:0 auto;">¿La ves caer? Son limones cayendo de fondo mientras administras tu dinero. Porque la economía también puede saber rico. 🍋❄️</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE: MOVIMIENTOS
+════════════════════════════════════════════════════ -->
+<div id="page-movimientos" class="page">
+  <div class="section">
+    <div class="section-title"><span class="dot"></span> Registrar movimiento</div>
+
+    <button class="toggle-form-btn" id="toggle-form-btn" onclick="toggleForm()">＋ Agregar nuevo movimiento</button>
+
+    <div id="form-container" class="card hidden" style="margin-bottom:1.5rem;">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Tipo</label>
+          <select class="form-select" id="tx-type">
+            <option value="income">💚 Ingreso</option>
+            <option value="expense">🔴 Gasto</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Categoría</label>
+          <select class="form-select" id="tx-cat">
+            <option>Mesada / Domingo</option>
+            <option>Trabajo / Empleo</option>
+            <option>Regalo</option>
+            <option>Venta / Comercio</option>
+            <option>Transporte</option>
+            <option>Comida</option>
+            <option>Escuela</option>
+            <option>Entretenimiento</option>
+            <option>Ropa</option>
+            <option>Tecnología</option>
+            <option>Salud</option>
+            <option>Ahorro</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Descripción</label>
+          <input class="form-input" type="text" id="tx-desc" placeholder="ej. Mesada del lunes">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Monto ($MXN)</label>
+          <input class="form-input" type="number" id="tx-amount" placeholder="0.00" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha</label>
+          <input class="form-input" type="date" id="tx-date">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-add" onclick="addTransaction()">Guardar movimiento</button>
+        <button class="btn-cancel" onclick="toggleForm()">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- Totales rápidos -->
+    <div class="stat-grid" id="quick-stats">
+      <div class="stat-card">
+        <div class="stat-label">Total ingresos</div>
+        <div class="stat-value green" id="total-income">$0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total gastos</div>
+        <div class="stat-value red" id="total-expense">$0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Balance</div>
+        <div class="stat-value lime" id="total-balance">$0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Movimientos</div>
+        <div class="stat-value" id="total-count">0</div>
+      </div>
+    </div>
+
+    <!-- Lista -->
+    <div class="section-title" style="margin-top:1.5rem;"><span class="dot"></span> Historial</div>
+    <div class="card" style="overflow-x:auto;">
+      <table class="tx-table" id="tx-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Categoría</th>
+            <th>Descripción</th>
+            <th>Tipo</th>
+            <th style="text-align:right">Monto</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tx-body">
+          <tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div>Sin movimientos aún. ¡Agrega tu primer ingreso!</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE: DASHBOARD
+════════════════════════════════════════════════════ -->
+<div id="page-dashboard" class="page">
+  <div class="section">
+    <div class="section-title"><span class="dot"></span> Dashboard financiero</div>
+
+    <div class="period-tabs">
+      <button class="period-tab active" onclick="setPeriod('weekly', this)">Semanal</button>
+      <button class="period-tab" onclick="setPeriod('biweekly', this)">Quincenal</button>
+      <button class="period-tab" onclick="setPeriod('monthly', this)">Mensual acumulado</button>
+    </div>
+
+    <div class="stat-grid" id="dash-stats">
+      <div class="stat-card">
+        <div class="stat-label">Ingresos del periodo</div>
+        <div class="stat-value green" id="d-income">$0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Gastos del periodo</div>
+        <div class="stat-value red" id="d-expense">$0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Balance neto</div>
+        <div class="stat-value lime" id="d-balance">$0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Tasa de ahorro</div>
+        <div class="stat-value amber" id="d-rate">0%</div>
+      </div>
+    </div>
+
+    <!-- Chart ingresos vs gastos -->
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div style="font-family:'Syne',sans-serif;font-weight:600;margin-bottom:1rem;font-size:0.95rem;">Ingresos vs Gastos</div>
+      <div class="chart-wrap">
+        <canvas id="chart-bar" role="img" aria-label="Gráfica de barras de ingresos versus gastos por día">Sin datos disponibles.</canvas>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+      <!-- Pie categorías -->
+      <div class="card">
+        <div style="font-family:'Syne',sans-serif;font-weight:600;margin-bottom:1rem;font-size:0.95rem;">Gastos por categoría</div>
+        <div style="position:relative;height:220px;">
+          <canvas id="chart-pie" role="img" aria-label="Gráfica circular de gastos por categoría">Sin datos disponibles.</canvas>
+        </div>
+      </div>
+      <!-- Evolución -->
+      <div class="card">
+        <div style="font-family:'Syne',sans-serif;font-weight:600;margin-bottom:1rem;font-size:0.95rem;">Balance acumulado</div>
+        <div style="position:relative;height:220px;">
+          <canvas id="chart-line" role="img" aria-label="Gráfica de línea del balance acumulado">Sin datos disponibles.</canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Salud financiera -->
+    <div class="card" style="margin-top:1.5rem;">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem;">🩺 Salud financiera</div>
+      <div id="health-section">
+        <p style="color:var(--text2);font-size:0.9rem;">Registra movimientos para ver tu diagnóstico financiero aquí.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE: INVERSIONES
+════════════════════════════════════════════════════ -->
+<div id="page-inversiones" class="page">
+  <div class="section">
+    <div class="section-title"><span class="dot"></span> Invertir inteligente</div>
+    <p style="color:var(--text2);margin-bottom:2rem;max-width:620px;">Opciones de inversión en bolsa seleccionadas para principiantes. Siempre investiga antes de invertir y consulta un asesor financiero certificado.</p>
+
+    <div class="inv-grid">
+      <!-- ETFs -->
+      <div class="inv-card">
+        <div class="inv-header">
+          <div class="inv-name">CETES / BONDDIA</div>
+          <div class="inv-ticker">MXN</div>
+        </div>
+        <div class="inv-desc">Certificados de la Tesorería de México. El instrumento de ahorro más seguro del país, disponible desde $100 MXN con Cetesdirecto.com.</div>
+        <div class="inv-meta">
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Rendimiento est.</div>
+            <div class="inv-meta-val pos">~10–11% anual</div>
+          </div>
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Mínimo</div>
+            <div class="inv-meta-val">$100 MXN</div>
+          </div>
+        </div>
+        <div class="inv-risk risk-low">Riesgo bajo</div>
+      </div>
+
+      <div class="inv-card">
+        <div class="inv-header">
+          <div class="inv-name">VOO — Vanguard S&P 500</div>
+          <div class="inv-ticker">ETF</div>
+        </div>
+        <div class="inv-desc">ETF que replica el índice S&P 500: las 500 empresas más grandes de EE. UU. (Apple, Google, Amazon). Ideal para crecimiento de largo plazo.</div>
+        <div class="inv-meta">
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Retorno histórico</div>
+            <div class="inv-meta-val pos">~10% anual (USD)</div>
+          </div>
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Plataforma</div>
+            <div class="inv-meta-val">GBM+, IBKR</div>
+          </div>
+        </div>
+        <div class="inv-risk risk-med">Riesgo medio</div>
+      </div>
+
+      <div class="inv-card">
+        <div class="inv-header">
+          <div class="inv-name">NAFTRAC / IPC México</div>
+          <div class="inv-ticker">BMV</div>
+        </div>
+        <div class="inv-desc">ETF sobre el Índice de Precios y Cotizaciones (IPC) de la Bolsa Mexicana de Valores. Diversificación en las empresas líderes de México.</div>
+        <div class="inv-meta">
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Mercado</div>
+            <div class="inv-meta-val">BMV México</div>
+          </div>
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Moneda</div>
+            <div class="inv-meta-val">MXN</div>
+          </div>
+        </div>
+        <div class="inv-risk risk-med">Riesgo medio</div>
+      </div>
+
+      <div class="inv-card">
+        <div class="inv-header">
+          <div class="inv-name">QQQ — Invesco NASDAQ</div>
+          <div class="inv-ticker">ETF</div>
+        </div>
+        <div class="inv-desc">Sigue al índice NASDAQ-100, dominado por empresas tecnológicas: Apple, Microsoft, Nvidia, Meta, Tesla. Alto potencial y alta volatilidad.</div>
+        <div class="inv-meta">
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Retorno histórico</div>
+            <div class="inv-meta-val pos">~14% anual (USD)</div>
+          </div>
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Plataforma</div>
+            <div class="inv-meta-val">GBM+, Bursanet</div>
+          </div>
+        </div>
+        <div class="inv-risk risk-high">Riesgo alto</div>
+      </div>
+
+      <div class="inv-card">
+        <div class="inv-header">
+          <div class="inv-name">FUNO — Fibra Uno</div>
+          <div class="inv-ticker">REIT</div>
+        </div>
+        <div class="inv-desc">Fideicomiso Inmobiliario que invierte en propiedades comerciales, industriales y de oficinas en México. Distribuye dividendos periódicos.</div>
+        <div class="inv-meta">
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Dividendos</div>
+            <div class="inv-meta-val pos">Trimestrales</div>
+          </div>
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Mercado</div>
+            <div class="inv-meta-val">BMV</div>
+          </div>
+        </div>
+        <div class="inv-risk risk-med">Riesgo medio</div>
+      </div>
+
+      <div class="inv-card">
+        <div class="inv-header">
+          <div class="inv-name">GBM+ / Kuspit</div>
+          <div class="inv-ticker">APP MX</div>
+        </div>
+        <div class="inv-desc">Apps mexicanas reguladas por la CNBV que permiten invertir desde $100 MXN en fondos diversificados, CETES, acciones y ETFs con interfaz amigable.</div>
+        <div class="inv-meta">
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Reguladas por</div>
+            <div class="inv-meta-val">CNBV México</div>
+          </div>
+          <div class="inv-meta-item">
+            <div class="inv-meta-label">Mínimo</div>
+            <div class="inv-meta-val">$100 MXN</div>
+          </div>
+        </div>
+        <div class="inv-risk risk-low">Riesgo bajo–medio</div>
+      </div>
+    </div>
+
+    <!-- Simulador de inversión -->
+    <div class="divider"></div>
+    <div class="section-title"><span class="dot"></span> Simulador de inversión</div>
+    <div class="card">
+      <div class="sim-grid">
+        <div>
+          <div class="form-grid" style="grid-template-columns:1fr;">
+            <div class="form-group">
+              <label class="form-label">Capital inicial ($MXN)</label>
+              <input class="form-input" type="number" id="sim-capital" value="1000" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Aportación mensual ($MXN)</label>
+              <input class="form-input" type="number" id="sim-monthly" value="200" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Rendimiento anual estimado (%)</label>
+              <input class="form-input" type="number" id="sim-rate" value="10" min="0" max="100">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Años de inversión</label>
+              <input class="form-input" type="number" id="sim-years" value="5" min="1" max="40">
+            </div>
+          </div>
+          <button class="btn-add" style="margin-top:14px;" onclick="runSimulator()">Calcular</button>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center;gap:12px;">
+          <div>
+            <div style="font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Valor futuro estimado</div>
+            <div class="sim-result" id="sim-result">$0</div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Ganancia generada</div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--green);" id="sim-profit">$0</div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Total aportado</div>
+            <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:600;color:var(--text3);" id="sim-contributed">$0</div>
+          </div>
+          <div style="font-size:0.76rem;color:var(--text2);line-height:1.5;margin-top:6px;">⚠️ Simulación educativa. Los rendimientos pasados no garantizan resultados futuros. Consulta un asesor financiero.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE: WIX
+════════════════════════════════════════════════════ -->
+<div id="page-wix" class="page">
+  <div class="section">
+    <div class="section-title"><span class="dot"></span> Conectar FinanzasBach con tu página Wix</div>
+    <p style="color:var(--text2);margin-bottom:2rem;max-width:680px;">Guía paso a paso para incrustar esta app en tu sitio Wix. Tienes <strong style="color:var(--text)">dos métodos</strong>: el más rápido usa GitHub Pages gratis para alojar el archivo, y el más avanzado usa Wix Velo para integración nativa.</p>
+
+    <!-- MÉTODO SELECTOR -->
+    <div class="period-tabs" style="margin-bottom:2rem;">
+      <button class="period-tab active" onclick="setWixMethod('github',this)">Método A — GitHub Pages (recomendado)</button>
+      <button class="period-tab" onclick="setWixMethod('velo',this)">Método B — Wix Velo (avanzado)</button>
+    </div>
+
+    <!-- ── MÉTODO A: GITHUB ── -->
+    <div id="wix-method-github">
+
+      <!-- FASE 1 -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        <div style="background:var(--lime);color:var(--navy);font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;">Descarga el archivo de la app</div>
+      </div>
+      <div class="card" style="margin-bottom:1.5rem;margin-left:44px;">
+        <p style="color:var(--text2);font-size:0.88rem;margin-bottom:10px;">Descarga <strong style="color:var(--lime)">finanzas-bachillerato.html</strong> (el archivo que estás usando ahora mismo) y guárdalo en tu computadora.</p>
+        <div style="background:var(--navy2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-size:0.83rem;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="background:rgba(181,232,36,.15);color:var(--lime);font-size:0.75rem;padding:2px 8px;border-radius:50px;font-weight:600;">ARCHIVO</span>
+            <span style="color:var(--text3);">finanzas-bachillerato.html</span>
+          </div>
+          <div style="color:var(--text2);font-size:0.8rem;">Tamaño aprox. 40 KB · Solo HTML, sin dependencias externas críticas</div>
+        </div>
+      </div>
+
+      <!-- FASE 2 -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        <div style="background:var(--lime);color:var(--navy);font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;">Crea un repositorio en GitHub y activa GitHub Pages</div>
+      </div>
+      <div class="card" style="margin-bottom:1.5rem;margin-left:44px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;">
+          <div>
+            <div style="font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">2a · Crear cuenta y repositorio</div>
+            <ol style="color:var(--text3);font-size:0.85rem;line-height:1.9;padding-left:1.2rem;">
+              <li>Entra a <a href="https://github.com" target="_blank" style="color:var(--lime);">github.com</a> y crea una cuenta gratuita</li>
+              <li>Haz clic en el botón verde <strong style="color:var(--text)">New</strong> (arriba a la izquierda)</li>
+              <li>En <em>Repository name</em> escribe: <code style="color:var(--lime);background:var(--navy);padding:1px 5px;border-radius:4px;">finanzasbach</code></li>
+              <li>Selecciona <strong style="color:var(--text)">Public</strong> (es obligatorio para Pages gratis)</li>
+              <li>Marca <strong style="color:var(--text)">Add a README file</strong></li>
+              <li>Clic en <strong style="color:var(--text)">Create repository</strong></li>
+            </ol>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">2b · Subir el archivo HTML</div>
+            <ol style="color:var(--text3);font-size:0.85rem;line-height:1.9;padding-left:1.2rem;">
+              <li>Dentro del repositorio haz clic en <strong style="color:var(--text)">Add file → Upload files</strong></li>
+              <li>Arrastra el archivo <code style="color:var(--lime);background:var(--navy);padding:1px 5px;border-radius:4px;">finanzas-bachillerato.html</code></li>
+              <li>En la parte inferior escribe en el mensaje: <em>"Subir app FinanzasBach"</em></li>
+              <li>Clic en <strong style="color:var(--text)">Commit changes</strong></li>
+            </ol>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">2c · Activar GitHub Pages</div>
+            <ol style="color:var(--text3);font-size:0.85rem;line-height:1.9;padding-left:1.2rem;">
+              <li>Ve a la pestaña <strong style="color:var(--text)">Settings</strong> del repositorio</li>
+              <li>En el menú lateral busca <strong style="color:var(--text)">Pages</strong></li>
+              <li>En <em>Source</em> selecciona <strong style="color:var(--text)">Deploy from a branch</strong></li>
+              <li>En <em>Branch</em> elige <code style="color:var(--lime);background:var(--navy);padding:1px 5px;border-radius:4px;">main</code> → carpeta <code style="color:var(--lime);background:var(--navy);padding:1px 5px;border-radius:4px;">/ (root)</code></li>
+              <li>Clic en <strong style="color:var(--text)">Save</strong></li>
+              <li>Espera 2–3 minutos y recarga la página</li>
+            </ol>
+          </div>
+        </div>
+        <div style="margin-top:1rem;background:rgba(181,232,36,.07);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px;">
+          <div style="font-size:0.78rem;color:var(--lime);font-weight:600;margin-bottom:4px;">✅ Tu URL pública quedará así:</div>
+          <div class="wix-code" style="margin-top:6px;font-size:0.85rem;">https://TU_USUARIO.github.io/finanzasbach/finanzas-bachillerato.html</div>
+          <div style="font-size:0.8rem;color:var(--text2);margin-top:6px;">Reemplaza <strong style="color:var(--text)">TU_USUARIO</strong> por tu nombre de usuario de GitHub.</div>
+        </div>
+      </div>
+
+      <!-- FASE 3 -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        <div style="background:var(--lime);color:var(--navy);font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;">Insertar la app en el editor Wix</div>
+      </div>
+      <div class="card" style="margin-bottom:1.5rem;margin-left:44px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+          <div>
+            <div style="font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">3a · Abrir el editor Wix</div>
+            <ol style="color:var(--text3);font-size:0.85rem;line-height:1.9;padding-left:1.2rem;">
+              <li>Entra a <a href="https://manage.wix.com" target="_blank" style="color:var(--lime);">manage.wix.com</a></li>
+              <li>Selecciona tu sitio y haz clic en <strong style="color:var(--text)">Editar sitio</strong></li>
+              <li>En la página donde quieras mostrar la app, haz clic en <strong style="color:var(--text)">＋ Añadir elementos</strong> (barra lateral izquierda)</li>
+              <li>Ve a <strong style="color:var(--text)">Incrustado → HTML personalizado</strong> (también aparece como <em>Embed</em>)</li>
+              <li>Arrastra el bloque a la página</li>
+            </ol>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">3b · Configurar el bloque HTML</div>
+            <ol style="color:var(--text3);font-size:0.85rem;line-height:1.9;padding-left:1.2rem;">
+              <li>Haz doble clic sobre el bloque HTML recién añadido</li>
+              <li>Selecciona <strong style="color:var(--text)">Introduce tu código</strong></li>
+              <li>Borra todo el contenido que aparezca</li>
+              <li>Pega el código iframe de abajo</li>
+              <li>Haz clic en <strong style="color:var(--text)">Actualizar</strong></li>
+              <li>Ajusta el tamaño del bloque arrastrando sus bordes (recomendado: 100% ancho, 800px alto)</li>
+            </ol>
+          </div>
+        </div>
+
+        <div style="margin-top:1.2rem;">
+          <div style="font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">📋 Código a pegar en Wix — reemplaza TU_USUARIO:</div>
+          <div class="wix-code" id="embed-code">&lt;iframe
+  src="https://TU_USUARIO.github.io/finanzasbach/finanzas-bachillerato.html"
+  width="100%"
+  height="800"
+  frameborder="0"
+  allow="clipboard-write"
+  style="border:none; border-radius:16px; display:block;"
+  title="FinanzasBach — App de finanzas personales para bachillerato"
+&gt;&lt;/iframe&gt;</div>
+          <button class="copy-btn" onclick="copyCode()">📋 Copiar código iframe</button>
+        </div>
+
+        <div style="margin-top:1rem;background:rgba(255,94,94,.07);border:1px solid rgba(255,94,94,.2);border-radius:var(--radius-sm);padding:12px;">
+          <div style="font-size:0.8rem;color:var(--red);font-weight:600;margin-bottom:4px;">⚠️ Nota importante sobre Wix</div>
+          <div style="font-size:0.8rem;color:var(--text2);">Wix no permite iframes de todos los dominios en su editor. Si el iframe no carga, ve a <strong style="color:var(--text)">Configuración del sitio → Permisos de contenido</strong> y agrega <code style="color:var(--lime);">github.io</code> como dominio de confianza. Alternativamente, usa el Método B (Wix Velo).</div>
+        </div>
+      </div>
+
+      <!-- FASE 4 -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        <div style="background:var(--lime);color:var(--navy);font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">4</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;">Añadir botón de WhatsApp flotante en Wix</div>
+      </div>
+      <div class="card" style="margin-bottom:1.5rem;margin-left:44px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+          <div>
+            <div style="font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Opción A · Botón nativo de Wix</div>
+            <ol style="color:var(--text3);font-size:0.85rem;line-height:1.9;padding-left:1.2rem;">
+              <li>En el editor, ve a <strong style="color:var(--text)">＋ Añadir → Botón</strong></li>
+              <li>Elige el estilo que prefieras</li>
+              <li>Escribe el texto: <em>"Soporte WhatsApp"</em></li>
+              <li>En <strong style="color:var(--text)">Enlace</strong> selecciona <em>URL externa</em></li>
+              <li>Pega la URL de abajo y marca <em>Abrir en nueva pestaña</em></li>
+              <li>Fija el botón a la página con <strong style="color:var(--text)">Fijar al scroll</strong> (esquina inferior)</li>
+            </ol>
+            <div class="wix-code" style="margin-top:8px;font-size:0.78rem;" id="wa-url">https://wa.me/525523239785?text=Hola,%20necesito%20soporte%20con%20FinanzasBach%20%F0%9F%92%B0</div>
+            <button class="copy-btn" style="margin-top:6px;" onclick="copyWA()">📋 Copiar URL WhatsApp</button>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Opción B · Widget oficial de WhatsApp para Wix</div>
+            <ol style="color:var(--text3);font-size:0.85rem;line-height:1.9;padding-left:1.2rem;">
+              <li>Ve al <a href="https://www.wix.com/app-market" target="_blank" style="color:var(--lime);">Wix App Market</a></li>
+              <li>Busca <strong style="color:var(--text)">"WhatsApp Chat"</strong></li>
+              <li>Instala la app gratuita <em>WhatsApp Chat by POWR</em> o <em>Elfsight WhatsApp Chat</em></li>
+              <li>En la configuración ingresa el número: <code style="color:var(--lime);background:var(--navy);padding:1px 5px;border-radius:4px;">525523239785</code></li>
+              <li>Activa la burbuja flotante y personaliza el mensaje de bienvenida</li>
+              <li>Publica los cambios</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- FASE 5 -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        <div style="background:var(--lime);color:var(--navy);font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">5</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;">Crear una sección explicativa en Wix sobre tu proyecto</div>
+      </div>
+      <div class="card" style="margin-left:44px;">
+        <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1rem;">Tu página Wix puede tener una sección de presentación antes del iframe. Aquí un ejemplo de estructura recomendada:</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
+          <div style="background:var(--navy2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;">
+            <div style="font-size:0.78rem;color:var(--lime);font-weight:600;margin-bottom:4px;">📌 Sección Hero</div>
+            <div style="color:var(--text2);font-size:0.8rem;">Título del proyecto, logo FinanzasBach, y una breve descripción de 2–3 líneas. Añade un botón <em>"Usar la app"</em> que lleve al anchor del iframe.</div>
+          </div>
+          <div style="background:var(--navy2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;">
+            <div style="font-size:0.78rem;color:var(--lime);font-weight:600;margin-bottom:4px;">📌 Sección "¿Qué hace?"</div>
+            <div style="color:var(--text2);font-size:0.8rem;">3 tarjetas con íconos: "Registra ingresos y gastos", "Analiza con gráficas", "Aprende a invertir". Wix tiene el componente <em>Grid de íconos</em> listo para usar.</div>
+          </div>
+          <div style="background:var(--navy2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;">
+            <div style="font-size:0.78rem;color:var(--lime);font-weight:600;margin-bottom:4px;">📌 Sección App (iframe)</div>
+            <div style="color:var(--text2);font-size:0.8rem;">El bloque HTML de Wix con el iframe de la app. Ponlo en sección de fondo oscuro para que resalte bien visualmente.</div>
+          </div>
+          <div style="background:var(--navy2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;">
+            <div style="font-size:0.78rem;color:var(--lime);font-weight:600;margin-bottom:4px;">📌 Sección Soporte</div>
+            <div style="color:var(--text2);font-size:0.8rem;">Texto "¿Tienes dudas?" con el botón de WhatsApp y el número +52 55 2323 9785. Opcional: formulario de contacto Wix nativo.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MÉTODO B: VELO ── -->
+    <div id="wix-method-velo" style="display:none;">
+
+      <div style="background:rgba(181,232,36,.07);border:1px solid var(--border2);border-radius:var(--radius);padding:1.2rem;margin-bottom:1.5rem;">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--lime);margin-bottom:6px;">¿Qué es Wix Velo?</div>
+        <p style="color:var(--text2);font-size:0.85rem;">Wix Velo es el entorno de desarrollo integrado de Wix. Permite escribir JavaScript para crear páginas dinámicas, conectar bases de datos y controlar elementos de la página directamente desde el editor. Es el método más potente para una integración real.</p>
+      </div>
+
+      <!-- PASO A -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        <div style="background:var(--amber);color:var(--navy);font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">A</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;">Activar Wix Velo en el editor</div>
+      </div>
+      <div class="card" style="margin-bottom:1.5rem;margin-left:44px;">
+        <ol style="color:var(--text3);font-size:0.85rem;line-height:2;padding-left:1.2rem;">
+          <li>Abre el editor Wix de tu sitio</li>
+          <li>En el menú superior haz clic en <strong style="color:var(--text)">Dev Tools</strong> (o <em>Herramientas de desarrollo</em>)</li>
+          <li>Selecciona <strong style="color:var(--text)">Activar Velo</strong> y confirma</li>
+          <li>Aparecerá un panel de código en la parte inferior del editor</li>
+        </ol>
+      </div>
+
+      <!-- PASO B -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        <div style="background:var(--amber);color:var(--navy);font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">B</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;">Crear la base de datos en Wix CMS</div>
+      </div>
+      <div class="card" style="margin-bottom:1.5rem;margin-left:44px;">
+        <p style="color:var(--text2);font-size:0.85rem;margin-bottom:10px;">Con Wix CMS puedes guardar los datos financieros en la nube, accesibles desde cualquier dispositivo.</p>
+        <ol style="color:var(--text3);font-size:0.85rem;line-height:2;padding-left:1.2rem;">
+          <li>En el panel lateral izquierdo del editor, busca <strong style="color:var(--text)">CMS → Bases de datos</strong></li>
+          <li>Clic en <strong style="color:var(--text)">＋ Nueva colección</strong></li>
+          <li>Nombre: <code style="color:var(--lime);background:var(--navy);padding:1px 5px;border-radius:4px;">Movimientos</code></li>
+          <li>Agrega los campos:</li>
+        </ol>
+        <div style="margin-top:10px;overflow-x:auto;">
+          <table style="width:100%;font-size:0.82rem;border-collapse:collapse;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);">
+                <th style="color:var(--text2);font-weight:500;padding:6px 10px;text-align:left;">Campo</th>
+                <th style="color:var(--text2);font-weight:500;padding:6px 10px;text-align:left;">Tipo</th>
+                <th style="color:var(--text2);font-weight:500;padding:6px 10px;text-align:left;">Descripción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+                <td style="padding:7px 10px;"><code style="color:var(--lime);">tipo</code></td>
+                <td style="padding:7px 10px;color:var(--text2);">Texto</td>
+                <td style="padding:7px 10px;color:var(--text2);">"income" o "expense"</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+                <td style="padding:7px 10px;"><code style="color:var(--lime);">categoria</code></td>
+                <td style="padding:7px 10px;color:var(--text2);">Texto</td>
+                <td style="padding:7px 10px;color:var(--text2);">Categoría del movimiento</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+                <td style="padding:7px 10px;"><code style="color:var(--lime);">descripcion</code></td>
+                <td style="padding:7px 10px;color:var(--text2);">Texto</td>
+                <td style="padding:7px 10px;color:var(--text2);">Descripción del movimiento</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+                <td style="padding:7px 10px;"><code style="color:var(--lime);">monto</code></td>
+                <td style="padding:7px 10px;color:var(--text2);">Número</td>
+                <td style="padding:7px 10px;color:var(--text2);">Monto en MXN</td>
+              </tr>
+              <tr>
+                <td style="padding:7px 10px;"><code style="color:var(--lime);">fecha</code></td>
+                <td style="padding:7px 10px;color:var(--text2);">Fecha</td>
+                <td style="padding:7px 10px;color:var(--text2);">Fecha del movimiento</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;color:var(--text2);font-size:0.8rem;">Establece los permisos de la colección en <strong style="color:var(--text)">Solo el sitio puede escribir / Cualquiera puede leer</strong> (o requiere login si quieres usuarios privados).</div>
+      </div>
+
+      <!-- PASO C -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        <div style="background:var(--amber);color:var(--navy);font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">C</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;">Código Velo para guardar y leer movimientos</div>
+      </div>
+      <div class="card" style="margin-bottom:1.5rem;margin-left:44px;">
+        <p style="color:var(--text2);font-size:0.85rem;margin-bottom:10px;">Copia este código en la pestaña <strong style="color:var(--text)">Página</strong> del panel Velo de la página donde está la app:</p>
+        <div class="wix-code" id="velo-code">// ─── FinanzasBach · Wix Velo Integration ───
+import wixData from 'wix-data';
+
+$w.onReady(function () {
+  // Cargar movimientos al iniciar
+  cargarMovimientos();
+});
+
+// Guardar un nuevo movimiento en el CMS
+export async function guardarMovimiento(tipo, categoria, descripcion, monto, fecha) {
+  const toInsert = {
+    tipo: tipo,           // "income" o "expense"
+    categoria: categoria,
+    descripcion: descripcion,
+    monto: parseFloat(monto),
+    fecha: new Date(fecha)
+  };
+  try {
+    const resultado = await wixData.insert('Movimientos', toInsert);
+    console.log('Movimiento guardado:', resultado._id);
+    return resultado;
+  } catch (err) {
+    console.error('Error al guardar:', err);
+  }
+}
+
+// Leer todos los movimientos ordenados por fecha
+export async function cargarMovimientos() {
+  try {
+    const resultados = await wixData.query('Movimientos')
+      .descending('fecha')
+      .limit(100)
+      .find();
+    return resultados.items;
+  } catch (err) {
+    console.error('Error al cargar:', err);
+    return [];
+  }
+}
+
+// Eliminar un movimiento por su ID
+export async function eliminarMovimiento(id) {
+  try {
+    await wixData.remove('Movimientos', id);
+    console.log('Movimiento eliminado:', id);
+  } catch (err) {
+    console.error('Error al eliminar:', err);
+  }
+}
+
+// Obtener resumen del período (weekly/biweekly/monthly)
+export async function resumenPeriodo(periodo) {
+  const ahora = new Date();
+  const dias = periodo === 'weekly' ? 7 : periodo === 'biweekly' ? 15 : 30;
+  const inicio = new Date(ahora);
+  inicio.setDate(ahora.getDate() - dias);
+
+  const resultados = await wixData.query('Movimientos')
+    .ge('fecha', inicio)
+    .find();
+
+  let ingresos = 0, gastos = 0;
+  resultados.items.forEach(item => {
+    if (item.tipo === 'income') ingresos += item.monto;
+    else gastos += item.monto;
+  });
+  return { ingresos, gastos, balance: ingresos - gastos };
+}</div>
+        <button class="copy-btn" onclick="copyVelo()">📋 Copiar código Velo</button>
+      </div>
+
+      <!-- PASO D -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        <div style="background:var(--amber);color:var(--navy);font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">D</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;">Publicar y probar el sitio</div>
+      </div>
+      <div class="card" style="margin-left:44px;">
+        <ol style="color:var(--text3);font-size:0.85rem;line-height:2;padding-left:1.2rem;">
+          <li>En el editor, haz clic en <strong style="color:var(--text)">Publicar</strong> (botón azul arriba a la derecha)</li>
+          <li>Confirma la publicación y espera a que se complete</li>
+          <li>Abre tu sitio en el navegador con la URL de Wix</li>
+          <li>Prueba agregar un movimiento y verifica que aparezca en <strong style="color:var(--text)">CMS → Bases de datos → Movimientos</strong></li>
+          <li>Revisa la consola del navegador (F12) si algo no funciona</li>
+        </ol>
+        <div style="margin-top:12px;background:rgba(47,216,122,.07);border:1px solid rgba(47,216,122,.2);border-radius:var(--radius-sm);padding:12px;">
+          <div style="font-size:0.8rem;color:var(--green);font-weight:600;margin-bottom:4px;">💡 Consejo de depuración</div>
+          <div style="font-size:0.8rem;color:var(--text2);">Wix Velo tiene un <strong style="color:var(--text)">Panel de registros</strong> en la parte inferior del editor. Ahí puedes ver los <code style="color:var(--lime)">console.log</code> en tiempo real mientras navegas el sitio en vista previa.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPARATIVA DE MÉTODOS -->
+    <div class="divider"></div>
+    <div class="section-title" style="margin-top:0;"><span class="dot"></span> Comparativa de métodos</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+      <div class="card" style="border-left:3px solid var(--lime);">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:8px;color:var(--lime);">Método A — GitHub Pages + iframe</div>
+        <div style="font-size:0.83rem;color:var(--text2);line-height:1.8;">
+          ✅ Más fácil de configurar<br>
+          ✅ No requiere conocimientos de programación<br>
+          ✅ 100% gratuito<br>
+          ✅ Listo en menos de 30 minutos<br>
+          ⚠️ Los datos se guardan solo en el navegador del usuario<br>
+          ⚠️ Puede haber restricciones de iframe en Wix
+        </div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--amber);">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:8px;color:var(--amber);">Método B — Wix Velo + CMS</div>
+        <div style="font-size:0.83rem;color:var(--text2);line-height:1.8;">
+          ✅ Datos en la nube (acceso desde cualquier dispositivo)<br>
+          ✅ Integración nativa con Wix<br>
+          ✅ Posibilidad de múltiples usuarios<br>
+          ✅ Panel CMS para ver los datos<br>
+          ⚠️ Requiere conocimientos básicos de JavaScript<br>
+          ⚠️ Wix CMS tiene límites en plan gratuito
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>FinanzasBach — Educación financiera para bachillerato 🎓</p>
+  <p style="margin-top:6px;">¿Dudas? <a href="https://wa.me/525523239785" target="_blank">WhatsApp: +52 55 2323 9785</a></p>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════════════ -->
+<script>
+// ── DATA STORE ──
+let transactions = JSON.parse(localStorage.getItem('fb_transactions') || '[]');
+let currentPeriod = 'weekly';
+let barChart = null, pieChart = null, lineChart = null;
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('tx-date').value = today;
+  renderTransactions();
+  renderDashboard();
+  runSimulator();
+  startSnow();
+  if (transactions.length === 0) seedDemoData();
+});
+
+function seedDemoData() {
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2,'0');
+  const dateStr = (daysAgo) => {
+    const d = new Date(now); d.setDate(d.getDate()-daysAgo);
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  };
+  const demo = [
+    {id:Date.now()+1,type:'income',cat:'Mesada / Domingo',desc:'Mesada semana',amount:400,date:dateStr(1)},
+    {id:Date.now()+2,type:'expense',cat:'Comida',desc:'Tacos en el recreo',amount:55,date:dateStr(1)},
+    {id:Date.now()+3,type:'expense',cat:'Transporte',desc:'Camión de regreso',amount:30,date:dateStr(2)},
+    {id:Date.now()+4,type:'income',cat:'Trabajo / Empleo',desc:'Ayudar en tienda del tío',amount:300,date:dateStr(5)},
+    {id:Date.now()+5,type:'expense',cat:'Entretenimiento',desc:'Netflix con amigos',amount:75,date:dateStr(6)},
+    {id:Date.now()+6,type:'expense',cat:'Escuela',desc:'Folder y plumas',amount:45,date:dateStr(7)},
+    {id:Date.now()+7,type:'income',cat:'Mesada / Domingo',desc:'Mesada semana anterior',amount:400,date:dateStr(8)},
+    {id:Date.now()+8,type:'expense',cat:'Comida',desc:'Almuerzo en la cafetería',amount:80,date:dateStr(9)},
+    {id:Date.now()+9,type:'expense',cat:'Ropa',desc:'Calcetines y gorro',amount:120,date:dateStr(10)},
+    {id:Date.now()+10,type:'income',cat:'Regalo',desc:'Cumpleaños de abuela',amount:500,date:dateStr(12)},
+  ];
+  transactions = demo;
+  saveTransactions();
+  renderTransactions();
+  renderDashboard();
+}
+
+// ── NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const tabs = ['inicio','movimientos','dashboard','inversiones','wix'];
+  const idx = tabs.indexOf(id);
+  document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+  if (id === 'dashboard') renderDashboard();
+}
+
+// ── FORM TOGGLE ──
+function toggleForm() {
+  const fc = document.getElementById('form-container');
+  const btn = document.getElementById('toggle-form-btn');
+  if (fc.classList.contains('hidden')) {
+    fc.classList.remove('hidden');
+    btn.textContent = '✕ Cerrar formulario';
+  } else {
+    fc.classList.add('hidden');
+    btn.textContent = '＋ Agregar nuevo movimiento';
+  }
+}
+
+// ── ADD TRANSACTION ──
+function addTransaction() {
+  const type = document.getElementById('tx-type').value;
+  const cat = document.getElementById('tx-cat').value;
+  const desc = document.getElementById('tx-desc').value.trim() || cat;
+  const amount = parseFloat(document.getElementById('tx-amount').value);
+  const date = document.getElementById('tx-date').value;
+  if (!amount || amount <= 0 || !date) { alert('Por favor llena monto y fecha.'); return; }
+  transactions.unshift({ id: Date.now(), type, cat, desc, amount, date });
+  saveTransactions();
+  renderTransactions();
+  document.getElementById('tx-desc').value = '';
+  document.getElementById('tx-amount').value = '';
+  toggleForm();
+}
+
+function deleteTransaction(id) {
+  transactions = transactions.filter(t => t.id !== id);
+  saveTransactions();
+  renderTransactions();
+  renderDashboard();
+}
+
+function saveTransactions() {
+  localStorage.setItem('fb_transactions', JSON.stringify(transactions));
+}
+
+// ── RENDER TRANSACTIONS ──
+function renderTransactions() {
+  const tbody = document.getElementById('tx-body');
+  if (transactions.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div>Sin movimientos aún. ¡Agrega tu primer ingreso!</div></td></tr>';
+  } else {
+    tbody.innerHTML = transactions.map(t => `
+      <tr>
+        <td style="color:var(--text2);font-size:0.85rem">${formatDate(t.date)}</td>
+        <td style="font-size:0.85rem">${t.cat}</td>
+        <td>${t.desc}</td>
+        <td><span class="tx-badge ${t.type}">${t.type === 'income' ? '💚 Ingreso' : '🔴 Gasto'}</span></td>
+        <td style="text-align:right;font-weight:600;font-family:'Syne',sans-serif;color:${t.type==='income'?'var(--green)':'var(--red)'}">
+          ${t.type==='income'?'+':'-'}${formatMXN(t.amount)}
+        </td>
+        <td><button class="tx-del" onclick="deleteTransaction(${t.id})">🗑</button></td>
+      </tr>
+    `).join('');
+  }
+
+  const income = transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const expense = transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  document.getElementById('total-income').textContent = formatMXN(income);
+  document.getElementById('total-expense').textContent = formatMXN(expense);
+  const bal = income - expense;
+  const balEl = document.getElementById('total-balance');
+  balEl.textContent = (bal >= 0 ? '+' : '') + formatMXN(bal);
+  balEl.className = 'stat-value ' + (bal >= 0 ? 'lime' : 'red');
+  document.getElementById('total-count').textContent = transactions.length;
+}
+
+// ── DASHBOARD ──
+function setPeriod(period, btn) {
+  currentPeriod = period;
+  document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderDashboard();
+}
+
+function getPeriodTransactions() {
+  const now = new Date();
+  const cutoff = new Date(now);
+  if (currentPeriod === 'weekly') cutoff.setDate(now.getDate() - 7);
+  else if (currentPeriod === 'biweekly') cutoff.setDate(now.getDate() - 15);
+  else cutoff.setDate(now.getDate() - 30);
+  return transactions.filter(t => new Date(t.date) >= cutoff);
+}
+
+function renderDashboard() {
+  const data = getPeriodTransactions();
+  const income = data.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const expense = data.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const balance = income - expense;
+  const rate = income > 0 ? ((income-expense)/income*100) : 0;
+
+  document.getElementById('d-income').textContent = formatMXN(income);
+  document.getElementById('d-expense').textContent = formatMXN(expense);
+  const balEl = document.getElementById('d-balance');
+  balEl.textContent = (balance >= 0?'+':'') + formatMXN(balance);
+  balEl.className = 'stat-value ' + (balance >= 0 ? 'lime' : 'red');
+  document.getElementById('d-rate').textContent = Math.round(Math.max(0, rate)) + '%';
+
+  renderBarChart(data);
+  renderPieChart(data);
+  renderLineChart(data);
+  renderHealth(income, expense, rate);
+}
+
+function renderBarChart(data) {
+  const days = getDays();
+  const labels = days.map(d => d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'}));
+  const incomeData = days.map(d => {
+    const ds = toDateStr(d);
+    return data.filter(t=>t.date===ds&&t.type==='income').reduce((s,t)=>s+t.amount,0);
+  });
+  const expenseData = days.map(d => {
+    const ds = toDateStr(d);
+    return data.filter(t=>t.date===ds&&t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  });
+  if (barChart) barChart.destroy();
+  barChart = new Chart(document.getElementById('chart-bar'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Ingresos', data: incomeData, backgroundColor: 'rgba(47,216,122,.7)', borderRadius: 6 },
+        { label: 'Gastos', data: expenseData, backgroundColor: 'rgba(255,94,94,.7)', borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#8fafc8', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,.05)' } },
+        y: { ticks: { color: '#8fafc8', font: { size: 11 }, callback: v => '$'+v }, grid: { color: 'rgba(255,255,255,.05)' } }
+      }
+    }
+  });
+}
+
+function renderPieChart(data) {
+  const cats = {};
+  data.filter(t=>t.type==='expense').forEach(t => { cats[t.cat] = (cats[t.cat]||0)+t.amount; });
+  const labels = Object.keys(cats);
+  const vals = Object.values(cats);
+  const colors = ['#b5e824','#2fd87a','#f5c842','#ff5e5e','#5ec4ff','#d87af7','#ff9f40','#4bc0c0','#ff6384','#36a2eb'];
+  if (pieChart) pieChart.destroy();
+  if (labels.length === 0) {
+    pieChart = null;
+    return;
+  }
+  pieChart = new Chart(document.getElementById('chart-pie'), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: vals, backgroundColor: colors.slice(0, labels.length), borderWidth: 0 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '55%',
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { color: '#8fafc8', font: { size: 10 }, boxWidth: 10 } }
+      }
+    }
+  });
+}
+
+function renderLineChart(data) {
+  const days = getDays();
+  const labels = days.map(d => d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'}));
+  let running = 0;
+  const cumData = days.map(d => {
+    const ds = toDateStr(d);
+    const inc = data.filter(t=>t.date===ds&&t.type==='income').reduce((s,t)=>s+t.amount,0);
+    const exp = data.filter(t=>t.date===ds&&t.type==='expense').reduce((s,t)=>s+t.amount,0);
+    running += inc - exp;
+    return Math.round(running);
+  });
+  if (lineChart) lineChart.destroy();
+  lineChart = new Chart(document.getElementById('chart-line'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Balance acumulado',
+        data: cumData,
+        borderColor: '#b5e824',
+        backgroundColor: 'rgba(181,232,36,.1)',
+        fill: true, tension: 0.4, pointRadius: 3, borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#8fafc8', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,.05)' } },
+        y: { ticks: { color: '#8fafc8', font: { size: 11 }, callback: v => '$'+v }, grid: { color: 'rgba(255,255,255,.05)' } }
+      }
+    }
+  });
+}
+
+function renderHealth(income, expense, rate) {
+  const container = document.getElementById('health-section');
+  if (income === 0 && expense === 0) {
+    container.innerHTML = '<p style="color:var(--text2);font-size:0.9rem;">Registra movimientos para ver tu diagnóstico financiero aquí.</p>';
+    return;
+  }
+  const r = Math.round(Math.max(0, rate));
+  let msg, color, emoji;
+  if (r >= 20) { msg = '¡Excelente! Estás ahorrando más del 20% de tus ingresos.'; color = 'var(--green)'; emoji = '🟢'; }
+  else if (r >= 10) { msg = 'Bien. Ahorras entre 10–20%. Intenta reducir gastos de entretenimiento.'; color = 'var(--amber)'; emoji = '🟡'; }
+  else if (r > 0) { msg = 'Atención. Tu tasa de ahorro es menor al 10%. Revisa tus gastos.'; color = 'var(--amber)'; emoji = '🟠'; }
+  else { msg = 'Alerta. Tus gastos superan tus ingresos en este período. ¡Hay que ajustar!'; color = 'var(--red)'; emoji = '🔴'; }
+
+  const pct = Math.max(0, Math.min(100, r));
+  container.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <div style="font-size:1.4rem">${emoji}</div>
+      <div>
+        <div style="font-weight:600;color:${color};margin-bottom:2px;">Tasa de ahorro: ${r}%</div>
+        <div style="color:var(--text2);font-size:0.85rem;">${msg}</div>
+      </div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill ${r < 10 ? 'red' : r < 20 ? 'amber' : ''}" style="width:${pct}%"></div>
+    </div>
+    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;">
+      <div style="font-size:0.82rem;color:var(--text2);">💡 <strong style="color:var(--text)">Consejo:</strong> La regla 50/30/20 sugiere usar 50% en necesidades, 30% en deseos y 20% en ahorro.</div>
+      <div style="font-size:0.82rem;color:var(--text2);">🎯 <strong style="color:var(--text)">Meta:</strong> Ahorra al menos $${Math.round(income * 0.2).toLocaleString('es-MX')} MXN (20% de tus ingresos).</div>
+    </div>
+  `;
+}
+
+// ── SIMULATOR ──
+function runSimulator() {
+  const P = parseFloat(document.getElementById('sim-capital').value) || 0;
+  const pmt = parseFloat(document.getElementById('sim-monthly').value) || 0;
+  const r = (parseFloat(document.getElementById('sim-rate').value) || 0) / 100 / 12;
+  const n = (parseFloat(document.getElementById('sim-years').value) || 0) * 12;
+  let fv = P;
+  if (r > 0) {
+    fv = P * Math.pow(1+r, n) + pmt * (Math.pow(1+r, n) - 1) / r;
+  } else {
+    fv = P + pmt * n;
+  }
+  const contributed = P + pmt * n;
+  const profit = fv - contributed;
+  document.getElementById('sim-result').textContent = formatMXN(fv);
+  document.getElementById('sim-profit').textContent = '+' + formatMXN(profit);
+  document.getElementById('sim-contributed').textContent = formatMXN(contributed);
+}
+
+// ── WIX COPY ──
+function copyCode() {
+  const code = document.getElementById('embed-code').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ ¡Copiado!';
+    setTimeout(() => { btn.textContent = '📋 Copiar código'; }, 2000);
+  });
+}
+
+// ── HELPERS ──
+function formatMXN(n) {
+  return '$' + Math.abs(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function formatDate(s) {
+  if (!s) return '';
+  const [y, m, d] = s.split('-');
+  return `${d}/${m}/${y}`;
+}
+function toDateStr(d) {
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function getDays() {
+  const now = new Date();
+  const days = currentPeriod === 'weekly' ? 7 : currentPeriod === 'biweekly' ? 15 : 30;
+  return Array.from({length: days}, (_, i) => {
+    const d = new Date(now);
+    d.setDate(now.getDate() - (days - 1 - i));
+    return d;
+  });
+}
+
+// ── NIEVE DE LIMÓN 🍋❄️ ──
+function startSnow() {
+  const canvas = document.getElementById('snow-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+
+  const lemons = Array.from({length: 28}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    size: 10 + Math.random() * 18,
+    speed: 0.5 + Math.random() * 1.2,
+    sway: Math.random() * 2 - 1,
+    rot: Math.random() * Math.PI * 2,
+    rotSpeed: (Math.random() - 0.5) * 0.03,
+    opacity: 0.15 + Math.random() * 0.25
+  }));
+
+  function drawLemon(x, y, size, rot, opacity) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.globalAlpha = opacity;
+    // body
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size * 0.65, size * 0.5, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#f5e342';
+    ctx.fill();
+    // bump left
+    ctx.beginPath();
+    ctx.ellipse(-size * 0.55, 0, size * 0.18, size * 0.13, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#f0d820';
+    ctx.fill();
+    // bump right
+    ctx.beginPath();
+    ctx.ellipse(size * 0.55, 0, size * 0.18, size * 0.13, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#f0d820';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    lemons.forEach(l => {
+      l.y += l.speed;
+      l.x += l.sway * 0.3;
+      l.rot += l.rotSpeed;
+      if (l.y > canvas.height + 40) {
+        l.y = -40;
+        l.x = Math.random() * canvas.width;
+      }
+      drawLemon(l.x, l.y, l.size, l.rot, l.opacity);
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+</script>
+</body>
+</html>
